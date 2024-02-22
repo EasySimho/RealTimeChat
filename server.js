@@ -4,7 +4,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/chat', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost/chat', { bufferTimeoutMS: 60000});
 
 const messageSchema = new mongoose.Schema({
   message: String
