@@ -4,7 +4,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/chat');
+mongoose.connect(process.env.MONGODB_URI);
 
 const messageSchema = new mongoose.Schema({
   message: String
