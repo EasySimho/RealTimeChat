@@ -40,24 +40,32 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
-        var chatInput = document.getElementById('chat-input');
-        var chatBox = document.getElementById('chat-box');
+       var socket = io();
+var chatInput = document.getElementById('chat-input');
+var chatBox = document.getElementById('chat-box');
 
-        chatInput.addEventListener('keydown', function(event) {
-            if (event.keyCode === 13 && event.target.value) {
-                socket.emit('chat message', event.target.value);
-                event.target.value = '';
-                event.preventDefault();
-            }
-        });
+socket.on('load messages', function(messages) {
+    messages.forEach(function(msg) {
+        var p = document.createElement('p');
+        p.textContent = msg.message;
+        chatBox.appendChild(p);
+    });
+});
 
-        socket.on('chat message', function(msg) {
-            var li = document.createElement('li');
-            li.textContent = msg;
-            chatBox.appendChild(li);
-            window.scrollTo(0, document.body.scrollHeight);
-        });
+chatInput.addEventListener('keydown', function(event) {
+    if (event.keyCode === 13 && event.target.value) {
+        socket.emit('chat message', event.target.value);
+        event.target.value = '';
+        event.preventDefault();
+    }
+});
+
+socket.on('chat message', function(msg) {
+    var p = document.createElement('p');
+    p.textContent = msg;
+    chatBox.appendChild(p);
+    window.scrollTo(0, document.body.scrollHeight);
+});v
     </script>
 </body>
 </html>
