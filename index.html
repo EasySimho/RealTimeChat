@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font: 16px Arial; 
+        }
+        .container {
+            max-width: 800px; 
+            margin: 0 auto;
+        }
+        .chat-box {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            height: 200px;
+        }
+        .chat-box li {
+            padding: 5px;
+            border-bottom: 1px dotted #ddd;
+        }
+        .chat-box li:last-child {
+            border-bottom: none;
+        }
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <ul id="chat-box" class="chat-box">
+            <!-- I messaggi della chat verranno inseriti qui -->
+        </ul>
+        <input type="text" id="chat-input" class="chat-input" placeholder="Scrivi un messaggio...">
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var chatInput = document.getElementById('chat-input');
+        var chatBox = document.getElementById('chat-box');
+
+        chatInput.addEventListener('keydown', function(event) {
+            if (event.keyCode === 13 && event.target.value) {
+                socket.emit('chat message', event.target.value);
+                event.target.value = '';
+                event.preventDefault();
+            }
+        });
+
+        socket.on('chat message', function(msg) {
+            var li = document.createElement('li');
+            li.textContent = msg;
+            chatBox.appendChild(li);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+</html>
