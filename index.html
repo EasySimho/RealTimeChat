@@ -30,6 +30,7 @@
         border-radius: 5px;
       }
       #chat-msg {
+        position: relative;
         padding: 0.8rem 2rem;
         -webkit-border-radius: 20px;
         -webkit-border-bottom-left-radius: 0;
@@ -41,6 +42,12 @@
         color: black;
         width: max-content;
         max-width: 300px;
+      }
+      #chat-username{
+        position: absolute;
+        font-size: .3rem;
+        bottom: 0;
+        left: 0;
       }
     </style>
   </head>
@@ -115,8 +122,8 @@
         p.textContent =  msg.message;
         span.textContent = msg.username
         p.id = "chat-msg";
+        span.id = "chat-username";
         chatBox.appendChild(p);
-        p.appendChild(span);
         window.scrollTo(0, document.body.scrollHeight);
       });
     </script>
