@@ -120,10 +120,11 @@
         var p = document.createElement("p");
         var span = document.createElement("span");
         p.textContent =  msg.message;
-        span.textContent = msg.username
+        span.textContent = msg.username;
         p.id = "chat-msg";
         span.id = "chat-username";
         chatBox.appendChild(p);
+        p.appendChild(span);
         window.scrollTo(0, document.body.scrollHeight);
       });
     </script>
