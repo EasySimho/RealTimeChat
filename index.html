@@ -87,8 +87,7 @@
         var securityCode = securityCodeInput.value;
         var username = usernameInput.value;
         // Verifica il codice di sicurezza e il nome utente prima di abilitare la chat
-        if (securityCode === "
-336512" && username) {
+        if (securityCode === "336512" && username) {
           chatInput.disabled = false;
           isLoggedIn = true;
           socket.emit("user login", username);
