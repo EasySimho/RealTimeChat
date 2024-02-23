@@ -112,6 +112,7 @@
       socket.on("chat message", function (msg) {
         var p = document.createElement("p");
         p.textContent = msg.username + ": " + msg.message;
+        p.id = "chat-msg";
         chatBox.appendChild(p);
         window.scrollTo(0, document.body.scrollHeight);
       });
