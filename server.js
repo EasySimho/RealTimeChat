@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI);
 
 const messageSchema = new mongoose.Schema({
+  username: String,
   message: String
 });
 
@@ -21,10 +22,14 @@ io.on('connection', (socket) => {
     socket.emit('load messages', messages);
   });
 
+  socket.on('user login', (username) => {
+    socket.username = username;
+  });
+
   socket.on('chat message', (msg) => {
-    const message = new Message({ message: msg });
+    const message = new Message({ username: socket.username, message: msg.message });
     message.save().then(() => {
-      io.emit('chat message', msg);
+      io.emit('chat message', { username: socket.username, message: msg.message });
     });
   });
 });
