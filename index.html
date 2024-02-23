@@ -111,9 +111,12 @@
 
       socket.on("chat message", function (msg) {
         var p = document.createElement("p");
-        p.textContent = msg.username + ": " + msg.message;
+        var span = document.createElement("span");
+        p.textContent =  msg.message;
+        span.textContent = msg.username
         p.id = "chat-msg";
         chatBox.appendChild(p);
+        p.appendChild(span);
         window.scrollTo(0, document.body.scrollHeight);
       });
     </script>
