@@ -22,7 +22,8 @@ mongoose.connect(process.env.MONGODB_URI);
 
 const messageSchema = new mongoose.Schema({
   username: String,
-  message: String
+  message: String,
+  color: String
 });
 
 const Message = mongoose.model('Message', messageSchema);
@@ -33,14 +34,14 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   Message.find().then(messages => {
-    socket.emit('load messages', messages)
-    socket.handshake.session.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+    socket.emit('load messages', messages);
   });
 
   socket.on('user login', (username, password) => {
-    if (password === 'your-security-code') {
+    if (password === '336512') {
       socket.handshake.session.isLoggedIn = true;
       socket.handshake.session.username = username;
+      socket.handshake.session.color = '#' + Math.floor(Math.random()*16777215).toString(16);
       socket.handshake.session.save();
       socket.emit('login success');
     } else {
