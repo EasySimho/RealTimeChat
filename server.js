@@ -33,7 +33,8 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   Message.find().then(messages => {
-    socket.emit('load messages', messages);
+    socket.emit('load messages', messages)
+    socket.handshake.session.color = '#' + Math.floor(Math.random()*16777215).toString(16);
   });
 
   socket.on('user login', (username, password) => {
@@ -52,9 +53,9 @@ io.on('connection', (socket) => {
       socket.emit('login required');
       return;
     }
-    const message = new Message({ username: socket.handshake.session.username, message: msg });
+    const message = new Message({ username: socket.handshake.session.username, message: msg, color: socket.handshake.session.color });
     message.save().then(() => {
-      io.emit('chat message', { username: socket.handshake.session.username, message: msg });
+      io.emit('chat message', { username: socket.handshake.session.username, message: msg, color: socket.handshake.session.color });
     });
   });
 });
