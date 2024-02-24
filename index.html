@@ -95,50 +95,63 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
-      var chatInput = document.getElementById("chat-input");
-      var chatBox = document.getElementById("chat-box");
-      var loginButton = document.getElementById("login-button");
-      var securityCodeInput = document.getElementById("security-code");
-      var usernameInput = document.getElementById("username");
+var chatInput = document.getElementById('chat-input');
+var chatBox = document.getElementById('chat-box');
+var loginButton = document.getElementById('login-button');
+var securityCodeInput = document.getElementById('security-code');
+var usernameInput = document.getElementById('username');
 
-      loginButton.addEventListener("click", function () {
-        var securityCode = securityCodeInput.value;
-        var username = usernameInput.value;
-        socket.emit("user login", username, securityCode);
-      });
+loginButton.addEventListener('click', function() {
+    var securityCode = securityCodeInput.value;
+    var username = usernameInput.value;
+    socket.emit('user login', username, securityCode);
+});
 
-      socket.on("login success", function () {
-        chatInput.disabled = false;
-        alert("Accesso effettuato con successo!");
-      });
+socket.on('login success', function() {
+    chatInput.disabled = false;
+    alert('Accesso effettuato con successo!');
+});
 
-      socket.on("login failure", function () {
-        alert("Codice di sicurezza errato!");
-      });
+socket.on('login failure', function() {
+    alert('Codice di sicurezza errato!');
+});
 
-      socket.on("login required", function () {
-        alert("Devi effettuare l'accesso prima di inviare un messaggio.");
-      });
+socket.on('login required', function() {
+    alert('Devi effettuare l\'accesso prima di inviare un messaggio.');
+});
 
-      chatInput.addEventListener("keydown", function (event) {
-        if (event.keyCode === 13 && event.target.value) {
-          socket.emit("chat message", event.target.value);
-          event.target.value = "";
-          event.preventDefault();
-        }
-      });
-
-      socket.on("chat message", function (msg) {
-        var p = document.createElement("p");
-        var span = document.createElement("span");
+socket.on('load messages', function(messages) {
+    messages.forEach(function(msg) {
+        var p = document.createElement('p');
+        var span = document.createElement('span');
         p.textContent = msg.message;
         span.textContent = msg.username;
-        p.id = "chat-msg";
-        span.id = "chat-username";
+        p.id = 'chat-msg';
+        span.id = 'chat-username';
         chatBox.appendChild(p);
         p.appendChild(span);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
+    });
+});
+
+chatInput.addEventListener('keydown', function(event) {
+    if (event.keyCode === 13 && event.target.value) {
+        socket.emit('chat message', event.target.value);
+        event.target.value = '';
+        event.preventDefault();
+    }
+});
+
+socket.on('chat message', function(msg) {
+    var p = document.createElement('p');
+    var span = document.createElement('span');
+    p.textContent = msg.message;
+    span.textContent = msg.username;
+    p.id = 'chat-msg';
+    span.id = 'chat-username';
+    chatBox.appendChild(p);
+    p.appendChild(span);
+    window.scrollTo(0, document.body.scrollHeight);
+});
     </script>
   </body>
 </html>
