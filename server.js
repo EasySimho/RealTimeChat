@@ -4,12 +4,18 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const mongoose = require('mongoose');
 const session = require('express-session');
+const sharedsession = require("express-socket.io-session");
 
-app.use(session({
-  secret: 'your-secret-key',
+var sessionMiddleware = session({
+  secret: "your-secret-key",
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Imposta su true se stai utilizzando https
+});
+
+app.use(sessionMiddleware);
+
+io.use(sharedsession(sessionMiddleware, {
+  autoSave: true
 }));
 
 mongoose.connect(process.env.MONGODB_URI);
