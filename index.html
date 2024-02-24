@@ -11,7 +11,7 @@
       .container {
         width: 80%;
         margin: auto;
-        max-width: 800px;
+        max-width: 900px;
       }
       #chat-box {
         height: 400px;
@@ -43,12 +43,24 @@
         width: max-content;
         max-width: 300px;
       }
-      #chat-username{
+      #chat-username {
         position: absolute;
-        font-size: .5rem;
+        font-size: 0.5rem;
         bottom: 0;
         left: 0;
-        margin: 0 0 0.2rem 0.2rem;
+        margin: 0 0 0.2rem 0.3rem;
+        text-transform: uppercase;
+      }
+      #login-form {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+        height: 30px;
+      }
+      #login-form input {
+        width: 50%;
+        margin-right: 1rem;
       }
     </style>
   </head>
@@ -89,29 +101,28 @@
       var securityCodeInput = document.getElementById("security-code");
       var usernameInput = document.getElementById("username");
 
-      var isLoggedIn = false;
-
       loginButton.addEventListener("click", function () {
         var securityCode = securityCodeInput.value;
         var username = usernameInput.value;
-        // Verifica il codice di sicurezza e il nome utente prima di abilitare la chat
-        if (securityCode === "336512" && username) {
-          chatInput.disabled = false;
-          isLoggedIn = true;
-          socket.emit("user login", username);
-        }
+        socket.emit("user login", username, securityCode);
+      });
+
+      socket.on("login success", function () {
+        chatInput.disabled = false;
+        alert("Accesso effettuato con successo!");
+      });
+
+      socket.on("login failure", function () {
+        alert("Codice di sicurezza errato!");
+      });
+
+      socket.on("login required", function () {
+        alert("Devi effettuare l'accesso prima di inviare un messaggio.");
       });
 
       chatInput.addEventListener("keydown", function (event) {
         if (event.keyCode === 13 && event.target.value) {
-          if (!isLoggedIn) {
-            alert("Devi effettuare l'accesso prima di inviare un messaggio.");
-            return;
-          }
-          socket.emit("chat message", {
-            username: usernameInput.value,
-            message: event.target.value,
-          });
+          socket.emit("chat message", event.target.value);
           event.target.value = "";
           event.preventDefault();
         }
@@ -120,7 +131,7 @@
       socket.on("chat message", function (msg) {
         var p = document.createElement("p");
         var span = document.createElement("span");
-        p.textContent =  msg.message;
+        p.textContent = msg.message;
         span.textContent = msg.username;
         p.id = "chat-msg";
         span.id = "chat-username";

@@ -3,6 +3,14 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const mongoose = require('mongoose');
+const session = require('express-session');
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Imposta su true se stai utilizzando https
+}));
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -22,14 +30,25 @@ io.on('connection', (socket) => {
     socket.emit('load messages', messages);
   });
 
-  socket.on('user login', (username) => {
-    socket.username = username;
+  socket.on('user login', (username, password) => {
+    if (password === 'your-security-code') {
+      socket.handshake.session.isLoggedIn = true;
+      socket.handshake.session.username = username;
+      socket.handshake.session.save();
+      socket.emit('login success');
+    } else {
+      socket.emit('login failure');
+    }
   });
 
   socket.on('chat message', (msg) => {
-    const message = new Message({ username: socket.username, message: msg.message });
+    if (!socket.handshake.session.isLoggedIn) {
+      socket.emit('login required');
+      return;
+    }
+    const message = new Message({ username: socket.handshake.session.username, message: msg });
     message.save().then(() => {
-      io.emit('chat message', { username: socket.username, message: msg.message });
+      io.emit('chat message', { username: socket.handshake.session.username, message: msg });
     });
   });
 });
