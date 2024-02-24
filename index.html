@@ -63,7 +63,15 @@
         margin-right: 1rem;
       }
 
-      
+      @media screen and (max-width: 600px) {
+        .container {
+          /* Stili specifici per mobile */
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+        }
+      }
     </style>
   </head>
   <body>
@@ -102,7 +110,7 @@
       var loginButton = document.getElementById("login-button");
       var securityCodeInput = document.getElementById("security-code");
       var usernameInput = document.getElementById("username");
-      var loginForm = document.getElementById('login-form');
+      var loginForm = document.getElementById("login-form");
 
       loginButton.addEventListener("click", function () {
         var securityCode = securityCodeInput.value;
@@ -113,7 +121,7 @@
       socket.on("login success", function () {
         chatInput.disabled = false;
         alert("Accesso effettuato con successo!");
-        loginForm.style.display = 'none';
+        loginForm.style.display = "none";
       });
 
       socket.on("login failure", function () {
