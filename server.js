@@ -7,9 +7,10 @@ const session = require('express-session');
 const sharedsession = require("express-socket.io-session");
 
 var sessionMiddleware = session({
-  secret: "your-secret-key",
+  secret: "dPCZ9fQ6YUHziLPg4NSzkdY4t5SULbEg",
   resave: false,
   saveUninitialized: true,
+
 });
 
 app.use(sessionMiddleware);
@@ -27,6 +28,8 @@ const messageSchema = new mongoose.Schema({
 });
 
 const Message = mongoose.model('Message', messageSchema);
+
+
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
