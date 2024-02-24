@@ -44,7 +44,8 @@ io.on('connection', (socket) => {
     if (password === '336512') {
       socket.handshake.session.isLoggedIn = true;
       socket.handshake.session.username = username;
-      socket.handshake.session.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+      socket.handshake.session.color = '#' + (Math.floor(Math.random() * (16777215 - 16777215 / 2) + 16777215 / 2)).toString(16);
+
       socket.handshake.session.save();
       socket.emit('login success');
     } else {
