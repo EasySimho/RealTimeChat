@@ -101,6 +101,25 @@ io.on('connection', (socket) => {
       }
     });
   });
+
+  socket.on('user register', (username, password) => {
+    User.findOne({ username }, function(err, user) {
+      if (err) {
+        socket.emit('register failure');
+      } else if (user) {
+        socket.emit('register failure');
+      } else {
+        const newUser = new User({ username, password });
+        newUser.save(function(err) {
+          if (err) {
+            socket.emit('register failure');
+          } else {
+            socket.emit('register success');
+          }
+        });
+      }
+    });
+  });
   
 
   socket.on('chat message', (msg) => {
