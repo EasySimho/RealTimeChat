@@ -12,6 +12,7 @@ var sessionMiddleware = session({
   saveUninitialized: true,
 
 });
+app.use(express.static('public'))
 
 app.use(sessionMiddleware);
 
