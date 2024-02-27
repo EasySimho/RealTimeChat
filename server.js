@@ -27,13 +27,57 @@ const messageSchema = new mongoose.Schema({
   color: String
 });
 
-const Message = mongoose.model('Message', messageSchema);
 
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String
+});
+
+const Message = mongoose.model('Message', messageSchema);
+const User = mongoose.model('User', userSchema);
 
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
+
+
+
+app.post('/register', (req, res) => {
+  const { username, password } = req.body;
+  User.findOne({ username }, function(err, user) {
+    if (err) {
+      res.status(500).send('Error occurred during registration.');
+    } else if (user) {
+      res.status(400).send('Username already exists.');
+    } else {
+      const newUser = new User({ username, password });
+      newUser.save(function(err) {
+        if (err) {
+          res.status(500).send('Error occurred during registration.');
+        } else {
+          res.status(200).send('Registration successful.');
+        }
+      });
+    }
+  });
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  User.findOne({ username, password }, function(err, user) {
+    if (err) {
+      res.status(500).send('Error occurred during login.');
+    } else if (!user) {
+      res.status(400).send('Invalid username or password.');
+    } else {
+      req.session.username = username;
+      res.status(200).send('Login successful.');
+    }
+  });
+});
+
+
 
 io.on('connection', (socket) => {
   Message.find().then(messages => {
@@ -41,17 +85,21 @@ io.on('connection', (socket) => {
   });
 
   socket.on('user login', (username, password) => {
-    if (password === '336512') {
-      socket.handshake.session.isLoggedIn = true;
-      socket.handshake.session.username = username;
-      socket.handshake.session.color = '#' + (Math.floor(Math.random() * (16777215 - 16777215 / 2) + 16777215 / 2)).toString(16);
-
-      socket.handshake.session.save();
-      socket.emit('login success');
-    } else {
-      socket.emit('login failure');
-    }
+    User.findOne({ username, password }, function(err, user) {
+      if (err) {
+        socket.emit('login failure');
+      } else if (user) {
+        socket.handshake.session.isLoggedIn = true;
+        socket.handshake.session.username = username;
+        socket.handshake.session.color = '#' + (Math.floor(Math.random() * (16777215 - 16777215 / 2) + 16777215 / 2)).toString(16);
+        socket.handshake.session.save();
+        socket.emit('login success');
+      } else {
+        socket.emit('login failure');
+      }
+    });
   });
+  
 
   socket.on('chat message', (msg) => {
     if (!socket.handshake.session.isLoggedIn) {
