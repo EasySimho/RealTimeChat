@@ -11,10 +11,10 @@ var toggleFormsButton = document.getElementById("toggle-forms");
 toggleFormsButton.addEventListener("click", function () {
     if (loginForm.style.display === "none") {
         registerForm.style.display = "none";
-        loginForm.style.display = "block";
+        loginForm.style.display = "flex";
     } else {
         loginForm.style.display = "none";
-        registerForm.style.display = "block";
+        registerForm.style.display = "flex";
     }
 });
 
